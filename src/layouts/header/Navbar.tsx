@@ -18,7 +18,7 @@ const Navbar = () => {
   const {config} = useLayout()
   return (
     <div className='app-navbar flex-shrink-0'>
-      <div className={clsx('app-navbar-item align-items-stretch', itemClass)}>
+      {/* <div className={clsx('app-navbar-item align-items-stretch', itemClass)}>
         <Search />
       </div>
 
@@ -49,7 +49,7 @@ const Navbar = () => {
 
       <div className={clsx('app-navbar-item', itemClass)}>
         <ThemeModeSwitcher toggleBtnClass={clsx('btn-active-light-primary btn-custom')} />
-      </div>
+      </div> */}
 
       <div className={clsx('app-navbar-item', itemClass)}>
         <div

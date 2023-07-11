@@ -6,12 +6,11 @@ import {MasterInit} from './layouts/MasterInit'
 const App = () => {
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
-      <LayoutProvider>
-        <Outlet />
-        <MasterInit />
-      </LayoutProvider>
+      <Outlet />
+      <MasterInit />
     </Suspense>
   )
 }
 
 export {App}
+//TNYk5lD7ivxSMNEh

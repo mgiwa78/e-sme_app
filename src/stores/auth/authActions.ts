@@ -6,7 +6,7 @@ const setAuth = (state: authState, action: {payload: authState}) => {
   state.userAuth = userAuth.userAuth
   state.userJwt = userAuth.userJwt
 }
-const removeAuth = (state: authState, action: {payload: authState}) => {
+const removeAuth = (state: authState) => {
   state.userAuth = null
   state.userJwt = ''
 }
