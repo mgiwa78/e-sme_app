@@ -4,9 +4,11 @@ import * as Yup from 'yup'
 import clsx from 'clsx'
 import {Link} from 'react-router-dom'
 import {useFormik} from 'formik'
-import {getUserByToken, login} from '../../services/auth/_requests'
-import {toAbsoluteUrl} from '../../helpers'
-import {useAuth} from '../../services/auth//Auth'
+import axios from 'axios'
+import Swal, {SweetAlertResult} from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import {useDispatch} from 'react-redux'
+import {authState, setAuth} from '../../stores/auth/authSlice'
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -25,15 +27,59 @@ const initialValues = {
   password: 'demo',
 }
 
-/*
-  Formik+YUP+Typescript:
-  https://jaredpalmer.com/formik/docs/tutorial#getfieldprops
-  https://medium.com/@maurice.de.beijer/yup-validation-and-typescript-and-formik-6c342578a20e
-*/
-
 export function Login() {
+  const MySwal = withReactContent(Swal)
+  const dispatch = useDispatch()
+
   const [loading, setLoading] = useState(false)
-  const {saveAuth, setCurrentUser} = useAuth()
+
+  const LogUserIn = async (values: any): Promise<any> => {
+    try {
+      const RESPONSE = await axios.post('http://localhost:5001/auth/signin', {...values})
+
+      return RESPONSE.data.data
+    } catch (error: any) {
+      console.log(error)
+      if (error.response.data.message === 'Invalid user credentials') {
+        return MySwal.fire({
+          text: `Invalid user credentials`,
+          icon: 'error',
+          buttonsStyling: false,
+          confirmButtonText: 'Ok!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: 'btn btn-primary',
+          },
+        })
+      }
+      // eslint-disable-next-line valid-typeof
+      else if (typeof error.response.data.errors === 'object') {
+        return MySwal.fire({
+          text: error.response.data.errors.map(
+            (e: {path: string; msg: string}) => `${e.path.toUpperCase()}:${e.msg}`
+          ),
+          icon: 'error',
+          buttonsStyling: false,
+          confirmButtonText: 'Ok!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: 'btn btn-primary',
+          },
+        })
+      }
+
+      // MySwal.fire({
+      //   text: 'PickUp Verified',
+      //   icon: 'success',
+      //   buttonsStyling: false,
+      //   confirmButtonText: 'Ok!',
+      //   heightAuto: false,
+      //   customClass: {
+      //     confirmButton: 'btn btn-primary',
+      //   },
+      // }).then(() => {})
+    }
+  }
 
   const formik = useFormik({
     initialValues,
@@ -41,13 +87,18 @@ export function Login() {
     onSubmit: async (values, {setStatus, setSubmitting}) => {
       setLoading(true)
       try {
-        const {data: auth} = await login(values.email, values.password)
-        saveAuth(auth)
-        const {data: user} = await getUserByToken(auth.api_token)
-        setCurrentUser(user)
+        const user = await LogUserIn(values)
+        console.log(user)
+        if (user) {
+          dispatch(setAuth(user))
+        }
+
+        setSubmitting(false)
+        setLoading(false)
+
+        // const {data: user} = await getUserByToken(auth.api_token)
+        // setCurrentUser(user)
       } catch (error) {
-        console.error(error)
-        saveAuth(undefined)
         setStatus('The login details are incorrect')
         setSubmitting(false)
         setLoading(false)
@@ -70,68 +121,12 @@ export function Login() {
       {/* begin::Heading */}
 
       {/* begin::Login options */}
-      <div className='row g-3 mb-9'>
-        {/* begin::Col */}
-        <div className='col-md-6'>
-          {/* begin::Google link */}
-          <a
-            href='#'
-            className='btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100'
-          >
-            <img
-              alt='Logo'
-              src={toAbsoluteUrl('/media/svg/brand-logos/google-icon.svg')}
-              className='h-15px me-3'
-            />
-            Sign in with Google
-          </a>
-          {/* end::Google link */}
-        </div>
-        {/* end::Col */}
 
-        {/* begin::Col */}
-        <div className='col-md-6'>
-          {/* begin::Google link */}
-          <a
-            href='#'
-            className='btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100'
-          >
-            <img
-              alt='Logo'
-              src={toAbsoluteUrl('/media/svg/brand-logos/apple-black.svg')}
-              className='theme-light-show h-15px me-3'
-            />
-            <img
-              alt='Logo'
-              src={toAbsoluteUrl('/media/svg/brand-logos/apple-black-dark.svg')}
-              className='theme-dark-show h-15px me-3'
-            />
-            Sign in with Apple
-          </a>
-          {/* end::Google link */}
-        </div>
-        {/* end::Col */}
-      </div>
       {/* end::Login options */}
 
       {/* begin::Separator */}
-      <div className='separator separator-content my-14'>
-        <span className='w-125px text-gray-500 fw-semibold fs-7'>Or with email</span>
-      </div>
-      {/* end::Separator */}
 
-      {formik.status ? (
-        <div className='mb-lg-15 alert alert-danger'>
-          <div className='alert-text font-weight-bold'>{formik.status}</div>
-        </div>
-      ) : (
-        <div className='mb-10 bg-light-info p-8 rounded'>
-          <div className='text-info'>
-            Use account <strong>admin@demo.com</strong> and password <strong>demo</strong> to
-            continue.
-          </div>
-        </div>
-      )}
+      {/* end::Separator */}
 
       {/* begin::Form group */}
       <div className='fv-row mb-8'>

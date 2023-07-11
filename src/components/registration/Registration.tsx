@@ -4,32 +4,49 @@ import {useState, useEffect} from 'react'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
 import clsx from 'clsx'
-import {getUserByToken, register} from '../../services/auth/_requests'
-import {Link} from 'react-router-dom'
-import {toAbsoluteUrl} from '../../helpers'
+import {Link, Router, useNavigate} from 'react-router-dom'
 import {PasswordMeterComponent} from '../../types/components'
-import {useAuth} from '../../services/auth/Auth'
+import axios from 'axios'
+import {authState, setAuth} from '../../stores/auth/authSlice'
+import {useDispatch} from 'react-redux'
+import withReactContent from 'sweetalert2-react-content'
+import Swal from 'sweetalert2'
 
 const initialValues = {
-  firstname: '',
-  lastname: '',
-  email: '',
-  password: '',
+  roles: 'Super Admin',
   changepassword: '',
   acceptTerms: false,
+  email: 'mail@mail.com',
+  password: 'Password',
+  firstName: 'Muhammad',
+  lastName: 'Giwa',
+}
+
+interface RegValues {
+  roles: string
+  changepassword: string
+  acceptTerms: boolean
+  email: string
+  password: string
+  firstName: string
+  lastName: string
 }
 
 const registrationSchema = Yup.object().shape({
-  firstname: Yup.string()
+  firstName: Yup.string()
     .min(3, 'Minimum 3 symbols')
     .max(50, 'Maximum 50 symbols')
     .required('First name is required'),
+  roles: Yup.string()
+    .min(3, 'Minimum 3 symbols')
+    .max(50, 'Maximum 50 symbols')
+    .required('Roles are required'),
   email: Yup.string()
     .email('Wrong email format')
     .min(3, 'Minimum 3 symbols')
     .max(50, 'Maximum 50 symbols')
     .required('Email is required'),
-  lastname: Yup.string()
+  lastName: Yup.string()
     .min(3, 'Minimum 3 symbols')
     .max(50, 'Maximum 50 symbols')
     .required('Last name is required'),
@@ -45,29 +62,83 @@ const registrationSchema = Yup.object().shape({
   acceptTerms: Yup.bool().required('You must accept the terms and conditions'),
 })
 
+const UserSignUp = async (values: RegValues) => {
+  const RESPONSE = await axios.post('http://localhost:5001/auth/signup', {...values})
+
+  return RESPONSE.data
+}
 export function Registration() {
+  const MySwal = withReactContent(Swal)
+  const Navigate = useNavigate()
   const [loading, setLoading] = useState(false)
-  const {saveAuth, setCurrentUser} = useAuth()
+
+  const dispatch = useDispatch()
+
   const formik = useFormik({
     initialValues,
     validationSchema: registrationSchema,
     onSubmit: async (values, {setStatus, setSubmitting}) => {
       setLoading(true)
       try {
-        const {data: auth} = await register(
-          values.email,
-          values.firstname,
-          values.lastname,
-          values.password,
-          values.changepassword
-        )
-        saveAuth(auth)
-        const {data: user} = await getUserByToken(auth.api_token)
-        setCurrentUser(user)
-      } catch (error) {
-        console.error(error)
-        saveAuth(undefined)
-        setStatus('The registration details is incorrect')
+        const {
+          data: {userAuth, userJwt},
+        } = await UserSignUp(values)
+        const auth = {userAuth, userJwt} as authState
+
+        dispatch(setAuth(auth))
+
+        return MySwal.fire({
+          text: 'Registration Success, Go to dashboard?',
+          icon: 'success',
+          buttonsStyling: false,
+          confirmButtonText: 'Yes!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: 'btn btn-primary',
+          },
+        }).then(() => {
+          Navigate('/dashboard')
+        })
+      } catch (error: any) {
+        if (error.response.data.message) {
+          return MySwal.fire({
+            text: error.response.data.message,
+            icon: 'error',
+            buttonsStyling: false,
+            confirmButtonText: 'Ok!',
+            heightAuto: false,
+            customClass: {
+              confirmButton: 'btn btn-primary',
+            },
+          })
+        } else if (typeof error.response.data.errors === 'object') {
+          setStatus('The registration details is incorrect')
+
+          return MySwal.fire({
+            text: error.response.data.errors.map(
+              (e: {path: string; msg: string}) => `${e.path.toUpperCase()}:${e.msg}`
+            ),
+            icon: 'error',
+            buttonsStyling: false,
+            confirmButtonText: 'Ok!',
+            heightAuto: false,
+            customClass: {
+              confirmButton: 'btn btn-primary',
+            },
+          })
+        } else {
+          return MySwal.fire({
+            text: error.message,
+            icon: 'error',
+            buttonsStyling: false,
+            confirmButtonText: 'Ok!',
+            heightAuto: false,
+            customClass: {
+              confirmButton: 'btn btn-primary',
+            },
+          })
+        }
+      } finally {
         setSubmitting(false)
         setLoading(false)
       }
@@ -96,53 +167,8 @@ export function Registration() {
       {/* end::Heading */}
 
       {/* begin::Login options */}
-      <div className='row g-3 mb-9'>
-        {/* begin::Col */}
-        <div className='col-md-6'>
-          {/* begin::Google link */}
-          <a
-            href='#'
-            className='btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100'
-          >
-            <img
-              alt='Logo'
-              src={toAbsoluteUrl('/media/svg/brand-logos/google-icon.svg')}
-              className='h-15px me-3'
-            />
-            Sign in with Google
-          </a>
-          {/* end::Google link */}
-        </div>
-        {/* end::Col */}
 
-        {/* begin::Col */}
-        <div className='col-md-6'>
-          {/* begin::Google link */}
-          <a
-            href='#'
-            className='btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100'
-          >
-            <img
-              alt='Logo'
-              src={toAbsoluteUrl('/media/svg/brand-logos/apple-black.svg')}
-              className='theme-light-show h-15px me-3'
-            />
-            <img
-              alt='Logo'
-              src={toAbsoluteUrl('/media/svg/brand-logos/apple-black-dark.svg')}
-              className='theme-dark-show h-15px me-3'
-            />
-            Sign in with Apple
-          </a>
-          {/* end::Google link */}
-        </div>
-        {/* end::Col */}
-      </div>
       {/* end::Login options */}
-
-      <div className='separator separator-content my-14'>
-        <span className='w-125px text-gray-500 fw-semibold fs-7'>Or with email</span>
-      </div>
 
       {formik.status && (
         <div className='mb-lg-15 alert alert-danger'>
@@ -150,55 +176,82 @@ export function Registration() {
         </div>
       )}
 
-      {/* begin::Form group Firstname */}
+      {/* begin::Form group FirstName */}
       <div className='fv-row mb-8'>
         <label className='form-label fw-bolder text-dark fs-6'>First name</label>
         <input
           placeholder='First name'
           type='text'
           autoComplete='off'
-          {...formik.getFieldProps('firstname')}
+          {...formik.getFieldProps('firstName')}
           className={clsx(
             'form-control bg-transparent',
             {
-              'is-invalid': formik.touched.firstname && formik.errors.firstname,
+              'is-invalid': formik.touched.firstName && formik.errors.firstName,
             },
             {
-              'is-valid': formik.touched.firstname && !formik.errors.firstname,
+              'is-valid': formik.touched.firstName && !formik.errors.firstName,
             }
           )}
         />
-        {formik.touched.firstname && formik.errors.firstname && (
+        {formik.touched.firstName && formik.errors.firstName && (
           <div className='fv-plugins-message-container'>
             <div className='fv-help-block'>
-              <span role='alert'>{formik.errors.firstname}</span>
+              <span role='alert'>{formik.errors.firstName}</span>
             </div>
           </div>
         )}
       </div>
       {/* end::Form group */}
       <div className='fv-row mb-8'>
-        {/* begin::Form group Lastname */}
+        {/* begin::Form group LastName */}
         <label className='form-label fw-bolder text-dark fs-6'>Last name</label>
         <input
           placeholder='Last name'
           type='text'
           autoComplete='off'
-          {...formik.getFieldProps('lastname')}
+          {...formik.getFieldProps('lastName')}
           className={clsx(
             'form-control bg-transparent',
             {
-              'is-invalid': formik.touched.lastname && formik.errors.lastname,
+              'is-invalid': formik.touched.lastName && formik.errors.lastName,
             },
             {
-              'is-valid': formik.touched.lastname && !formik.errors.lastname,
+              'is-valid': formik.touched.lastName && !formik.errors.lastName,
             }
           )}
         />
-        {formik.touched.lastname && formik.errors.lastname && (
+        {formik.touched.lastName && formik.errors.lastName && (
           <div className='fv-plugins-message-container'>
             <div className='fv-help-block'>
-              <span role='alert'>{formik.errors.lastname}</span>
+              <span role='alert'>{formik.errors.lastName}</span>
+            </div>
+          </div>
+        )}
+        {/* end::Form group */}
+      </div>
+      <div className='fv-row mb-8'>
+        {/* begin::Form group LastName */}
+        <label className='form-label fw-bolder text-dark fs-6'>Roles</label>
+        <input
+          placeholder='Roles'
+          type='text'
+          autoComplete='off'
+          {...formik.getFieldProps('roles')}
+          className={clsx(
+            'form-control bg-transparent',
+            {
+              'is-invalid': formik.touched.roles && formik.errors.roles,
+            },
+            {
+              'is-valid': formik.touched.roles && !formik.errors.roles,
+            }
+          )}
+        />
+        {formik.touched.roles && formik.errors.roles && (
+          <div className='fv-plugins-message-container'>
+            <div className='fv-help-block'>
+              <span role='alert'>{formik.errors.roles}</span>
             </div>
           </div>
         )}

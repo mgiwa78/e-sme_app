@@ -2,7 +2,7 @@
 import {Route, Routes, Navigate} from 'react-router-dom'
 import {MasterLayout} from '../layouts/MasterLayout'
 // import TopBarProgress from 'react-topbar-progress-indicator'
-import {DashboardWrapper} from '../views/dashboard/DashboardWrapper'
+import {DashboardWrapper} from '../views/DashboardWrapper'
 
 // import {getCSSVariableValue} from '../types/_utils'
 // import {WithChildren} from '../helpers/index'
