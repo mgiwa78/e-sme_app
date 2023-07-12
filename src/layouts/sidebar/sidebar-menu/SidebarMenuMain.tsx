@@ -17,14 +17,12 @@ const SidebarMenuMain = () => {
           <span className='menu-section text-muted text-uppercase fs-8 ls-1'>Menu</span>
         </div>
       </div>
-      <SidebarMenuItemWithSub
-        to='/crafted/pages'
-        title='Pages'
+      <SidebarMenuItem
+        to='/dashboard'
+        title='Activities'
         fontIcon='bi-archive'
         icon='element-plus'
-      >
-        <SidebarMenuItem to='/crafted/pages/profile/overview' title='Overview' hasBullet={true} />
-      </SidebarMenuItemWithSub>
+      />
     </>
   )
 }

@@ -28,8 +28,10 @@ const HeaderUserMenu: FC = () => {
 
           <div className='d-flex flex-column'>
             <div className='fw-bolder d-flex align-items-center fs-5'>
-              {userAuth?.first_name} {userAuth?.first_name}
-              <span className='badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2'>Pro</span>
+              {userAuth?.firstName} {userAuth?.lastName}
+              <span className='badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2'>
+                {userAuth?.roles}
+              </span>
             </div>
             <span className='fw-bold text-muted text-hover-primary fs-7'>{userAuth?.email}</span>
           </div>

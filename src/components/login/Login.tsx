@@ -23,8 +23,8 @@ const loginSchema = Yup.object().shape({
 })
 
 const initialValues = {
-  email: 'admin@demo.com',
-  password: 'demo',
+  email: '',
+  password: '',
 }
 
 export function Login() {
@@ -58,6 +58,17 @@ export function Login() {
           text: error.response.data.errors.map(
             (e: {path: string; msg: string}) => `${e.path.toUpperCase()}:${e.msg}`
           ),
+          icon: 'error',
+          buttonsStyling: false,
+          confirmButtonText: 'Ok!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: 'btn btn-primary',
+          },
+        })
+      } else {
+        return MySwal.fire({
+          text: error.message,
           icon: 'error',
           buttonsStyling: false,
           confirmButtonText: 'Ok!',
