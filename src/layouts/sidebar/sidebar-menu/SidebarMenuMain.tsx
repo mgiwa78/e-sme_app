@@ -17,12 +17,14 @@ const SidebarMenuMain = () => {
           <span className='menu-section text-muted text-uppercase fs-8 ls-1'>Menu</span>
         </div>
       </div>
-      <SidebarMenuItem
-        to='/dashboard'
-        title='Activities'
-        fontIcon='bi-archive'
-        icon='element-plus'
-      />
+      <SidebarMenuItem to='/#' title='Activities' icon='bi bi-activity' />
+      <SidebarMenuItem to='/#' title='Profile' icon='bi bi-person-square' />
+      <SidebarMenuItem to='/#' title='Knowledge' icon='bi bi-journal-text' />
+      <SidebarMenuItem to='/#' title='Tools' icon='bi bi-wrench-adjustable-circle' />
+      <SidebarMenuItem to='/#' title='Funding' icon='bi bi-wallet2' />
+      <SidebarMenuItem to='/#' title='Support' icon='bi bi-question-circle' />
+      <SidebarMenuItem to='/#' title='Opportunity' icon='bi bi-list-task' />
+      <SidebarMenuItem to='/#' title='FAQ' icon='bi bi-patch-question' />
     </>
   )
 }
