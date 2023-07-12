@@ -17,7 +17,7 @@ export function HeaderWrapper() {
       <div
         id='kt_app_header_container'
         className={clsx(
-          'app-container flex-lg-grow-1',
+          'app-container flex-lg-grow-1 w-100',
           classes.headerContainer.join(' '),
           config.app?.header?.default?.containerClass
         )}
@@ -38,7 +38,7 @@ export function HeaderWrapper() {
                 <Link to='/dashboard' className='d-lg-none'>
                   <img
                     alt='Logo'
-                    src={toAbsoluteUrl('/media/logos/default-small.svg')}
+                    src={toAbsoluteUrl('/media/logos/e-SME (1).svg')}
                     className='h-30px'
                   />
                 </Link>
@@ -76,7 +76,7 @@ export function HeaderWrapper() {
 
         <div
           id='kt_app_header_wrapper'
-          className='d-flex align-items-stretch justify-content-between flex-lg-grow-1'
+          className='d-flex align-items-between w-100 justify-content-between flex-lg-grow-1'
         >
           {config.app.header.default?.content === 'menu' &&
             config.app.header.default.menu?.display && (
@@ -96,8 +96,8 @@ export function HeaderWrapper() {
                 <Header />
               </div>
             )}
-          <Navbar />
         </div>
+        <Navbar />
       </div>
     </div>
   )
