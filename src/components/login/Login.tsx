@@ -9,7 +9,7 @@ import Swal, {SweetAlertResult} from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import {useDispatch} from 'react-redux'
 import {authState, setAuth} from '../../stores/auth/authSlice'
-import __CONSTANTS__ from '../../constants/__CONSTANTS__'
+import __CONSTANTS__ from '../../__CONSTANTS__'
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()

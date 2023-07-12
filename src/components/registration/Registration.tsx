@@ -11,6 +11,7 @@ import {authState, setAuth} from '../../stores/auth/authSlice'
 import {useDispatch} from 'react-redux'
 import withReactContent from 'sweetalert2-react-content'
 import Swal from 'sweetalert2'
+import __CONSTANTS__ from '../../__CONSTANTS__'
 
 const initialValues = {
   roles: 'Super Admin',
@@ -63,13 +64,14 @@ const registrationSchema = Yup.object().shape({
 })
 
 const UserSignUp = async (values: RegValues) => {
-  const RESPONSE = await axios.post('http://localhost:5001/auth/signup', {...values})
+  const RESPONSE = await axios.post(`${API_URL}/auth/signup`, {...values})
 
   return RESPONSE.data
 }
 export function Registration() {
   const MySwal = withReactContent(Swal)
   const Navigate = useNavigate()
+  const {API_URL} = __CONSTANTS__
   const [loading, setLoading] = useState(false)
 
   const dispatch = useDispatch()
