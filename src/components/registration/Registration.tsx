@@ -16,7 +16,6 @@ import __CONSTANTS__ from '../../__CONSTANTS__'
 const initialValues = {
   roles: 'Super Admin',
   changepassword: '',
-  acceptTerms: false,
   email: 'mail@mail.com',
   password: 'Password',
   firstName: 'Muhammad',
@@ -26,7 +25,6 @@ const initialValues = {
 interface RegValues {
   roles: string
   changepassword: string
-  acceptTerms: boolean
   email: string
   password: string
   firstName: string
@@ -60,10 +58,10 @@ const registrationSchema = Yup.object().shape({
     .max(50, 'Maximum 50 symbols')
     .required('Password confirmation is required')
     .oneOf([Yup.ref('password')], "Password and Confirm Password didn't match"),
-  acceptTerms: Yup.bool().required('You must accept the terms and conditions'),
 })
 
 const UserSignUp = async (values: RegValues) => {
+  const {API_URL} = __CONSTANTS__
   const RESPONSE = await axios.post(`${API_URL}/auth/signup`, {...values})
 
   return RESPONSE.data
@@ -361,34 +359,7 @@ export function Registration() {
       {/* end::Form group */}
 
       {/* begin::Form group */}
-      <div className='fv-row mb-8'>
-        <label className='form-check form-check-inline' htmlFor='kt_login_toc_agree'>
-          <input
-            className='form-check-input'
-            type='checkbox'
-            id='kt_login_toc_agree'
-            {...formik.getFieldProps('acceptTerms')}
-          />
-          <span>
-            I Accept the{' '}
-            <a
-              href='https://keenthemes.com/metronic/?page=faq'
-              target='_blank'
-              className='ms-1 link-primary'
-            >
-              Terms
-            </a>
-            .
-          </span>
-        </label>
-        {formik.touched.acceptTerms && formik.errors.acceptTerms && (
-          <div className='fv-plugins-message-container'>
-            <div className='fv-help-block'>
-              <span role='alert'>{formik.errors.acceptTerms}</span>
-            </div>
-          </div>
-        )}
-      </div>
+
       {/* end::Form group */}
 
       {/* begin::Form group */}
@@ -397,7 +368,7 @@ export function Registration() {
           type='submit'
           id='kt_sign_up_submit'
           className='btn btn-lg btn-primary w-100 mb-5'
-          disabled={formik.isSubmitting || !formik.isValid || !formik.values.acceptTerms}
+          disabled={formik.isSubmitting || !formik.isValid}
         >
           {!loading && <span className='indicator-label'>Submit</span>}
           {loading && (
