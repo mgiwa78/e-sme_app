@@ -9,6 +9,7 @@ import Swal, {SweetAlertResult} from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import {useDispatch} from 'react-redux'
 import {authState, setAuth} from '../../stores/auth/authSlice'
+import __CONSTANTS__ from '../../constants/__CONSTANTS__'
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -30,12 +31,12 @@ const initialValues = {
 export function Login() {
   const MySwal = withReactContent(Swal)
   const dispatch = useDispatch()
-
+  const {API_URL} = __CONSTANTS__
   const [loading, setLoading] = useState(false)
 
   const LogUserIn = async (values: any): Promise<any> => {
     try {
-      const RESPONSE = await axios.post('http://localhost:5001/auth/signin', {...values})
+      const RESPONSE = await axios.post(`${API_URL}/auth/signin`, {...values})
 
       return RESPONSE.data.data
     } catch (error: any) {
