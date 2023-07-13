@@ -25,6 +25,14 @@ const SidebarMenuMain = () => {
         <SidebarMenuItem to='#' title='SON' hasBullet={true} />
         <SidebarMenuItem to='#' title='NAFDAC' hasBullet={true} />
       </SidebarMenuItemWithSub>
+      <SidebarMenuItemWithSub to='#' title='Banks' icon='bi bi-bank'>
+        <SidebarMenuItem to='#' title='BOI' hasBullet={true} />
+        <SidebarMenuItem to='#' title='BOA' hasBullet={true} />
+        <SidebarMenuItem to='#' title='DBN' hasBullet={true} />
+        <SidebarMenuItem to='#' title='AFDB' hasBullet={true} />
+        <SidebarMenuItem to='#' title='NIRSAL' hasBullet={true} />
+        <SidebarMenuItem to='#' title='NAFDAC' hasBullet={true} />
+      </SidebarMenuItemWithSub>
       <SidebarMenuItem to='/#' title='Profile' icon='bi bi-person-square' />
       <SidebarMenuItem to='/#' title='Knowledge' icon='bi bi-journal-text' />
       <SidebarMenuItem to='/#' title='Tools' icon='bi bi-wrench-adjustable-circle' />
