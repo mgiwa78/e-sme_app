@@ -1,0 +1,40 @@
+.ads-1 {
+  height: 418px;
+  max-width: 450px;
+  max-height: 700px;
+  width: 100%;
+}
+.ads-2 {
+  height: 418px;
+  width: 100%;
+
+  max-width: 450px;
+  max-height: 700px;
+}
+.ads-3 {
+  height: 578px;
+  width: 100%;
+
+  max-width: 450px;
+  max-height: 700px;
+}
+@media only screen and (min-width: 768px) {
+  .ads-1 {
+    height: 568px;
+    max-width: 568px;
+    max-height: 568px;
+    width: 100%;
+  }
+  .ads-2 {
+    height: 568px;
+    max-width: 568px;
+
+    max-height: 568px;
+  }
+  .ads-3 {
+    height: 878px;
+    max-width: 568px;
+
+    max-height: 778px;
+  }
+}
